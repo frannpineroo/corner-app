@@ -1,19 +1,12 @@
 import { supabase } from "../lib/supabase";
+import type { CuotaInsert } from "../types/models";
 
 export const registrarPago = async (
-    alumno_id: string,
-    monto: number,
-    mes: string,
-    user_id: string
+    cuota: CuotaInsert
 ): Promise<boolean> => {
     const { error } = await supabase
         .from('cuotas')
-        .insert([{
-            alumno_id,
-            monto,
-            mes,
-            created_by: user_id
-        }]);
+        .insert([cuota]);
 
     if (error) {
         console.error(error);

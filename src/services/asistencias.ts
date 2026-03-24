@@ -1,17 +1,12 @@
 import { supabase } from "../lib/supabase";
+import type { AsistenciaInsert } from "../types/models";
 
 export const registrarAsistencia = async (
-    alumno_id: string,
-    user_id: string
+    asistenia: AsistenciaInsert
 ): Promise<boolean> => {
     const { error } = await supabase
         .from('asistencias')
-        .insert([{
-            alumno_id,
-            fecha: new Date().toISOString(),
-            presente: true,
-            created_by: user_id
-        }]);
+        .insert([asistenia]);
 
     if (error) {
         console.error(error);
