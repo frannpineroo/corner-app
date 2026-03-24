@@ -1,5 +1,5 @@
 import { supabase } from "../lib/supabase";
-import type { Alumno } from "../types/db";
+import type { Alumno, AlumnoInsert } from "../types/models";
 
 export const getAlumnos = async (): Promise<Alumno[]> => {
     const { data, error } = await supabase
@@ -11,19 +11,15 @@ export const getAlumnos = async (): Promise<Alumno[]> => {
         return []
     }
 
-    return data as Alumno[];
+    return data ?? [];
 }
 
 export const crearAlumno = async (
-    nombre: string,
-    nro_padres: string,
-    ficha_medica: boolean,
-    fecha_nacimiento: string,
-    actividad_id: string
+    alumno: AlumnoInsert
 ): Promise<boolean> => {
     const { error } = await supabase
         .from('alumnos')
-        .insert([{ nombre, nro_padres, ficha_medica, fecha_nacimiento, actividad_id }]);
+        .insert([alumno]);
 
     if (error) {
         console.error(error);
