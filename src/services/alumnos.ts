@@ -28,3 +28,34 @@ export const crearAlumno = async (
 
     return true;
 }
+
+export const editarAlumno = async (
+    id: string,
+    alumno: Partial<AlumnoInsert>
+): Promise<boolean> => {
+    const { error } = await supabase
+        .from("alumnos")
+        .update(alumno)
+        .eq("id", id);
+
+    if (error) {
+        console.error(error);
+        return false;
+    }
+
+    return true;
+}
+
+export const borrarAlumno = async (id: string): Promise<boolean> => {
+    const { error } = await supabase
+        .from("alumnos")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+        console.error(error);
+        return false;
+    }
+
+    return true;
+}
