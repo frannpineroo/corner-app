@@ -42,12 +42,13 @@ const AlumnoForm = ({ onCreated }: Props) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
+        <form onSubmit={handleSubmit} className="bg-gray-800 rounded-xl shadow p-4 mb-6 flex flex-wrap gap-3 items-end">
             <input
                 name="nombre"
                 placeholder="Nombre"
                 value={form.nombre}
                 onChange={handleChange}
+                className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
             />
 
             <input
@@ -55,6 +56,7 @@ const AlumnoForm = ({ onCreated }: Props) => {
                 placeholder="Teléfono padres"
                 value={form.nro_padres ?? ""}
                 onChange={handleChange}
+                className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
             />
 
             <input
@@ -62,16 +64,18 @@ const AlumnoForm = ({ onCreated }: Props) => {
                 name="fecha_nacimiento"
                 value={form.fecha_nacimiento ?? ""}
                 onChange={handleChange}
+                className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
             />
 
-            <label>
-                Ficha médica
+            <label className="flex items-center gap-2 text-sm text-gray-300">
                 <input
                     type="checkbox"
                     name="ficha_medica"
                     checked={form.ficha_medica ?? false}
                     onChange={handleChange}
+                    className="w-4 h-4 accent-blue-500"
                 />
+                Ficha médica
             </label>
 
             <input
@@ -79,9 +83,13 @@ const AlumnoForm = ({ onCreated }: Props) => {
                 placeholder="Actividad ID"
                 value={form.actividad_id ?? ""}
                 onChange={handleChange}
+                className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
             />
 
-            <button type="submit">Crear Alumno</button>
+            <button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+            >Crear Alumno</button>
         </form>
     );
 };
