@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getAlumnos } from "../services/alumnos";
 import type { Alumno } from "../types/models";
 import AlumnoForm from "../components/AlumnoForm";
+import { logout } from "../services/auth";
 
 const AlumnosPage = () => {
     const [alumnos, setAlumnos] = useState<Alumno[]>([]);
@@ -22,6 +23,7 @@ const AlumnosPage = () => {
     return (
         <div style={{ padding: "20px" }}>
             <h1>Alumnos</h1>
+            <button onClick={logout}>Cerrar sesion</button>
 
             <AlumnoForm onCreated={fetchAlumnos} />
 
