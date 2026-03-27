@@ -3,6 +3,7 @@ import { getAlumnos, borrarAlumno, editarAlumno } from "../services/alumnos";
 import type { Alumno } from "../types/models";
 import AlumnoForm from "../components/AlumnoForm";
 import { logout } from "../services/auth";
+import { Pencil, Trash2, Check, X } from "lucide-react";
 
 const AlumnosPage = () => {
     const [alumnos, setAlumnos] = useState<Alumno[]>([]);
@@ -97,10 +98,10 @@ const AlumnosPage = () => {
                                             Ficha médica
                                         </label>
                                         <button onClick={handleGuardar} className="bg-green-500 hover:bg-green-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-                                            Guardar
+                                            <Check size={16} />
                                         </button>
                                         <button onClick={() => setEditandoId(null)} className="bg-gray-300 hover:bg-gray-400 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-                                            Cancelar
+                                            <X size={16} />
                                         </button>
                                     </div>
                                 ) : (
@@ -116,13 +117,13 @@ const AlumnosPage = () => {
                                                 onClick={() => handleEditarClick(alumno)}
                                                 className="bg-yellow-400 hover:bg-yellow-500 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors"
                                             >
-                                                Editar
+                                                <Pencil size={16} />
                                             </button>
                                             <button
                                                 onClick={() => handleBorrar(alumno.id)}
                                                 className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors"
                                             >
-                                                Borrar
+                                                <Trash2 size={16} />
                                             </button>
                                         </div>
                                     </div>

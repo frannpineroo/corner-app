@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { crearAlumno } from "../services/alumnos";
 import type { AlumnoInsert } from "../types/models";
+import { UserPlus } from "lucide-react";
 
 interface Props {
     onCreated: () => void;
@@ -89,7 +90,10 @@ const AlumnoForm = ({ onCreated }: Props) => {
             <button
                 type="submit"
                 className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-            >Crear Alumno</button>
+            >
+                <UserPlus size={16} />
+
+            </button>
         </form>
     );
 };
