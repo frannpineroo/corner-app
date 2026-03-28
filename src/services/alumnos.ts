@@ -1,10 +1,14 @@
 import { supabase } from "../lib/supabase";
 import type { Alumno, AlumnoInsert } from "../types/models";
 
-export const getAlumnos = async (): Promise<Alumno[]> => {
-    const { data, error } = await supabase
-        .from('alumnos')
-        .select('*')
+export const getAlumnos = async (actividad_id?: string): Promise<Alumno[]> => {
+    let query = supabase.from("alumnos").select("*");
+
+    if (actividad_id) {
+        query = query.eq('actividad_id', actividad_id);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
         console.error(error);

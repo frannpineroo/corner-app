@@ -1,6 +1,6 @@
 import { useAuth } from "./hooks/useAuth";
 import Login from "./pages/Login";
-import AlumnosPage from "./pages/AlumnosPage";
+import AdminPanel from "./pages/AdminPanel";
 
 export default function App() {
     const { user, loading } = useAuth();
@@ -8,5 +8,5 @@ export default function App() {
     if (loading) return <p>Cargando...</p>
     if (!user) return <Login />
 
-    return <AlumnosPage />
+    return <AdminPanel />
 }

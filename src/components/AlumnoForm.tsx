@@ -5,31 +5,26 @@ import { UserPlus } from "lucide-react";
 
 interface Props {
     onCreated: () => void;
+    actividadId: string;
 }
 
-const AlumnoForm = ({ onCreated }: Props) => {
+const AlumnoForm = ({ onCreated, actividadId }: Props) => {
     const [form, setForm] = useState<AlumnoInsert>({
         nombre: "",
         nro_padres: "",
         ficha_medica: false,
         fecha_nacimiento: "",
-        actividad_id: ""
+        actividad_id: actividadId
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
-
-        setForm({
-            ...form,
-            [name]: type === "checkbox" ? checked : value
-        });
+        setForm({ ...form, [name]: type === "checkbox" ? checked : value });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        const ok = await crearAlumno(form);
-
+        const ok = await crearAlumno({ ...form, actividad_id: actividadId });
         if (ok) {
             onCreated();
             setForm({
@@ -37,7 +32,7 @@ const AlumnoForm = ({ onCreated }: Props) => {
                 nro_padres: "",
                 ficha_medica: false,
                 fecha_nacimiento: "",
-                actividad_id: ""
+                actividad_id: actividadId
             });
         }
     };
@@ -51,7 +46,6 @@ const AlumnoForm = ({ onCreated }: Props) => {
                 onChange={handleChange}
                 className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
             />
-
             <input
                 name="nro_padres"
                 placeholder="Teléfono padres"
@@ -59,15 +53,13 @@ const AlumnoForm = ({ onCreated }: Props) => {
                 onChange={handleChange}
                 className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
             />
-
             <input
                 type="date"
                 name="fecha_nacimiento"
                 value={form.fecha_nacimiento ?? ""}
                 onChange={handleChange}
-                className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
+                className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-
             <label className="flex items-center gap-2 text-sm text-gray-300">
                 <input
                     type="checkbox"
@@ -78,21 +70,11 @@ const AlumnoForm = ({ onCreated }: Props) => {
                 />
                 Ficha médica
             </label>
-
-            <input
-                name="actividad_id"
-                placeholder="Actividad ID"
-                value={form.actividad_id ?? ""}
-                onChange={handleChange}
-                className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
-            />
-
             <button
                 type="submit"
                 className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
             >
                 <UserPlus size={16} />
-
             </button>
         </form>
     );
