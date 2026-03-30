@@ -19,6 +19,10 @@ export const login = async (
 }
 
 export const logout = async () => {
-    const { error } = await supabase.auth.signOut();
+    const { data } = await supabase.auth.getSession()
+    if (data.session?.user?.id) {
+        localStorage.removeItem(`profile_${data.session.user.id}`)
+    }
+    const { error } = await supabase.auth.signOut()
     if (error) throw error
 }

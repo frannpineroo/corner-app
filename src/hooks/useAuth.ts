@@ -11,17 +11,29 @@ export const useAuth = () => {
     const [loading, setLoading] = useState(true);
 
     const fetchProfile = async (userId: string) => {
-        const { data } = await Promise.race([
-            supabase
-                .from("profiles")
-                .select("*")
-                .eq("id", userId)
-                .single(),
-            new Promise<{ data: null }>((resolve) =>
-                setTimeout(() => resolve({ data: null }), 1000)
-            )
-        ])
-        setProfile((data as Profile) ?? null)
+        try {
+            const cached = localStorage.getItem(`profile_${userId}`)
+            if (cached) {
+                setProfile(JSON.parse(cached))
+                return
+            }
+
+            const { data } = await Promise.race([
+                supabase.from("profiles").select("*").eq("id", userId).single(),
+                new Promise<{ data: null }>((resolve) =>
+                    setTimeout(() => resolve({ data: null }), 3000)
+                )
+            ])
+
+            if (data) {
+                localStorage.setItem(`profile_${userId}`, JSON.stringify(data))
+                setProfile(data as Profile)
+            } else {
+                setProfile(null)
+            }
+        } catch {
+            setProfile(null)
+        }
     }
 
     useEffect(() => {
