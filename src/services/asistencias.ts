@@ -34,3 +34,25 @@ export const registrarAsistencia = async (
 
     return true;
 }
+
+export const marcarAsistencia = async (
+    alumno_id: string,
+    presente: boolean,
+    created_by: string
+): Promise<boolean> => {
+    const fecha = new Date().toISOString().split("T")[0];
+
+    const { error } = await supabase
+        .from("asistencias")
+        .upsert(
+            { alumno_id, fecha, presente, created_by },
+            { onConflict: "alumno_id,fecha" }
+        );
+
+    if (error) {
+        console.error(error);
+        return false;
+    }
+
+    return true;
+}
