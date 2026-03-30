@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { getAlumnos, borrarAlumno, editarAlumno } from "../services/alumnos";
 import type { Alumno } from "../types/models";
-import AlumnoForm from "../components/AlumnoForm";
-import { Pencil, Trash2, Check, X, ChevronLeft } from "lucide-react";
 import type { Tables } from "../types/supabase";
+import AlumnoForm from "../components/AlumnoForm";
+import AsistenciaModal from "../components/AsistenciaModal";
+import { Pencil, Trash2, Check, X, ChevronLeft, ClipboardList } from "lucide-react";
 
 type Actividad = Tables<"actividades">
 
@@ -17,6 +18,7 @@ const AlumnosPage = ({ actividad, onVolver }: Props) => {
     const [loading, setLoading] = useState(true);
     const [editandoId, setEditandoId] = useState<string | null>(null);
     const [editForm, setEditForm] = useState<Partial<Alumno>>({});
+    const [alumnoHistorial, setAlumnoHistorial] = useState<Alumno | null>(null);
 
     const fetchAlumnos = async () => {
         setLoading(true);
@@ -122,6 +124,12 @@ const AlumnosPage = ({ actividad, onVolver }: Props) => {
                                         </div>
                                         <div className="flex gap-2">
                                             <button
+                                                onClick={() => setAlumnoHistorial(alumno)}
+                                                className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors"
+                                            >
+                                                <ClipboardList size={16} />
+                                            </button>
+                                            <button
                                                 onClick={() => handleEditarClick(alumno)}
                                                 className="bg-yellow-400 hover:bg-yellow-500 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors"
                                             >
@@ -141,6 +149,12 @@ const AlumnosPage = ({ actividad, onVolver }: Props) => {
                     </ul>
                 )}
             </div>
+            {alumnoHistorial && (
+                <AsistenciaModal
+                    alumno={alumnoHistorial}
+                    onCerrar={() => setAlumnoHistorial(null)}
+                />
+            )}
         </div>
     );
 };
