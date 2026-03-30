@@ -15,7 +15,6 @@ export default function ProfesorPanel() {
     const [actividades, setActividades] = useState<Actividad[]>([]);
     const [actividadSeleccionada, setActividadSeleccionada] = useState<Actividad | null>(null);
     const [alumnos, setAlumnos] = useState<Alumno[]>([]);
-    const [asistencias, setAsistencias] = useState<Record<string, boolean | null>>({});
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -35,7 +34,6 @@ export default function ProfesorPanel() {
             setAlumnos(data);
             const inicial: Record<string, boolean | null> = {};
             data.forEach(a => { inicial[a.id] = null });
-            setAsistencias(inicial);
             setLoading(false);
         }
         fetch()

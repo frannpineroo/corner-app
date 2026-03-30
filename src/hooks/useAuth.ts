@@ -25,7 +25,7 @@ export const useAuth = () => {
     }
 
     useEffect(() => {
-        const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
+        const { data: listener } = supabase.auth.onAuthStateChange(async (_, session) => {
             const sessionUser = session?.user ?? null
             setUser(sessionUser)
             if (sessionUser) {

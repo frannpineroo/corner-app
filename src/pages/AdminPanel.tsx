@@ -10,7 +10,7 @@ type Actividad = Tables<"actividades">;
 
 export default function AdminPanel() {
     const [actividades, setActividades] = useState<Actividad[]>([]);
-    const [loading, setLoading] = useState();
+    const [loading, setLoading] = useState(false);
     const [nuevaActividad, setNuevaActividad] = useState("");
     const [actividadSeleccionada, setActividadSeleccionada] = useState<Actividad | null>(null);
     const [cuotasActividad, setCuotasActividad] = useState<Actividad | null>(null)
