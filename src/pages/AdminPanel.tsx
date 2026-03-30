@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { getActividades, crearActividad, borrarActividad } from "../services/actividades";
 import { logout } from "../services/auth";
 import type { Tables } from "../types/supabase";
-import { PlusCircle, Trash2, ChevronRight } from "lucide-react";
+import CuotasPage from "./CuotasPage";
 import AlumnosPage from "./AlumnosPage";
+import { PlusCircle, Trash2, ChevronRight, DollarSign } from "lucide-react";
 
 type Actividad = Tables<"actividades">;
 
@@ -12,6 +13,7 @@ export default function AdminPanel() {
     const [loading, setLoading] = useState();
     const [nuevaActividad, setNuevaActividad] = useState("");
     const [actividadSeleccionada, setActividadSeleccionada] = useState<Actividad | null>(null);
+    const [cuotasActividad, setCuotasActividad] = useState<Actividad | null>(null)
 
     const fetchActividades = async () => {
         setLoading(true);
@@ -40,6 +42,24 @@ export default function AdminPanel() {
             <AlumnosPage
                 actividad={actividadSeleccionada}
                 onVolver={() => setActividadSeleccionada(null)}
+            />
+        )
+    }
+
+    if (actividadSeleccionada) {
+        return (
+            <AlumnosPage
+                actividad={actividadSeleccionada}
+                onVolver={() => setActividadSeleccionada(null)}
+            />
+        )
+    }
+
+    if (cuotasActividad) {
+        return (
+            <CuotasPage
+                actividad={cuotasActividad}
+                onVolver={() => setCuotasActividad(null)}
             />
         )
     }
@@ -90,12 +110,22 @@ export default function AdminPanel() {
                                     <ChevronRight size={18} />
                                     {actividad.nombre}
                                 </button>
-                                <button
-                                    onClick={() => handleBorrar(actividad.id)}
-                                    className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors"
-                                >
-                                    <Trash2 size={16} />
-                                </button>
+                                <div>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => setCuotasActividad(actividad)}
+                                            className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors"
+                                        >
+                                            <DollarSign size={16} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleBorrar(actividad.id)}
+                                            className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </div>
+                                </div>
                             </li>
                         ))}
                     </ul>

@@ -44,7 +44,7 @@ export default function ProfesorPanel() {
     const handleMarcar = async (alumno_id: string, presente: boolean) => {
         if (!user) return;
         await marcarAsistencia(alumno_id, presente, user.id);
-        setAsistencias(prev => ({ ...prev, [alumno_id]: presente }));
+        setAlumnos(prev => prev.filter(a => a.id !== alumno_id));
     }
 
     if (actividadSeleccionada) {
@@ -66,24 +66,32 @@ export default function ProfesorPanel() {
 
                     {loading ? (
                         <p className="text-gray-400 text-center">Cargando...</p>
+                    ) : alumnos.length === 0 ? (
+                        <div className="bg-gray-800 rounded-xl p-8 text-center">
+                            <p className="text-green-400 font-semibold text-lg">¡Asistencia completada!</p>
+                            <p className="text-gray-400 text-sm mt-1">Todos los alumnos fueron marcados</p>
+                            <button
+                                onClick={() => setActividadSeleccionada(null)}
+                                className="mt-4 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                            >
+                                Volver a actividades
+                            </button>
+                        </div>
                     ) : (
                         <ul className="flex flex-col gap-3">
                             {alumnos.map((alumno) => (
-                                <li key={alumno.id} className={`rounded-xl shadow p-4 flex justify-between items-center transition-colors ${asistencias[alumno.id] === true ? "bg-green-900/40" :
-                                    asistencias[alumno.id] === false ? "bg-red-900/40" :
-                                        "bg-gray-800"
-                                    }`}>
+                                <li key={alumno.id} className="bg-gray-800 rounded-xl shadow p-4 flex justify-between items-center">
                                     <span className="text-white font-medium">{alumno.nombre}</span>
                                     <div className="flex gap-2">
                                         <button
                                             onClick={() => handleMarcar(alumno.id, true)}
-                                            className={`px-3 py-1.5 rounded-lg text-white text-sm font-medium transition-colors ${asistencias[alumno.id] === true ? "bg-green-500" : "bg-gray-600 hover:bg-green-500"}`}
+                                            className="px-3 py-1.5 rounded-lg text-white text-sm font-medium bg-gray-600 hover:bg-green-500 transition-colors"
                                         >
                                             <Check size={16} />
                                         </button>
                                         <button
                                             onClick={() => handleMarcar(alumno.id, false)}
-                                            className={`px-3 py-1.5 rounded-lg text-white text-sm font-medium transition-colors ${asistencias[alumno.id] === false ? "bg-red-500" : "bg-gray-600 hover:bg-red-500"}`}
+                                            className="px-3 py-1.5 rounded-lg text-white text-sm font-medium bg-gray-600 hover:bg-red-500 transition-colors"
                                         >
                                             <X size={16} />
                                         </button>
