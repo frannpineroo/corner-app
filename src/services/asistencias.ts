@@ -10,6 +10,7 @@ export const getAsistenciaPorAlumno = async (alumno_id: string): Promise<Asisten
         .eq("alumno_id", alumno_id)
         .order("fecha", { ascending: false });
 
+
     if (error) {
         console.error(error);
         return [];
