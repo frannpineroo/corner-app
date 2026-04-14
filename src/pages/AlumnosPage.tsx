@@ -75,78 +75,103 @@ const AlumnosPage = ({ actividad, onVolver }: Props) => {
                 {loading ? (
                     <p className="text-gray-500 text-center">Cargando...</p>
                 ) : (
-                    <ul className="flex flex-col gap-3">
-                        {alumnos.map((alumno) => (
-                            <li key={alumno.id} className="bg-gray-800 rounded-xl shadow p-4">
-                                {editandoId === alumno.id ? (
-                                    <div className="flex flex-wrap gap-3 items-end">
-                                        <input
-                                            value={editForm.nombre ?? ""}
-                                            onChange={e => setEditForm({ ...editForm, nombre: e.target.value })}
-                                            placeholder="Nombre"
-                                            className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
-                                        />
-                                        <input
-                                            value={editForm.nro_padres ?? ""}
-                                            onChange={e => setEditForm({ ...editForm, nro_padres: e.target.value })}
-                                            placeholder="Teléfono padres"
-                                            className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
-                                        />
-                                        <input
-                                            type="date"
-                                            value={editForm.fecha_nacimiento ?? ""}
-                                            onChange={e => setEditForm({ ...editForm, fecha_nacimiento: e.target.value })}
-                                            className="bg-gray-700 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                        />
-                                        <label className="flex items-center gap-2 text-sm text-gray-300">
-                                            <input
-                                                type="checkbox"
-                                                checked={editForm.ficha_medica ?? false}
-                                                onChange={e => setEditForm({ ...editForm, ficha_medica: e.target.checked })}
-                                                className="w-4 h-4 accent-blue-500"
-                                            />
-                                            Ficha médica
-                                        </label>
-                                        <button onClick={handleGuardar} className="bg-green-500 hover:bg-green-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-                                            <Check size={16} />
-                                        </button>
-                                        <button onClick={() => setEditandoId(null)} className="bg-gray-600 hover:bg-gray-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-                                            <X size={16} />
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className="flex justify-between items-start">
-                                        <div className="flex flex-col gap-1 text-sm">
-                                            <span className="text-base font-bold text-white">{alumno.nombre}</span>
-                                            <span className="text-gray-300">📞 {alumno.nro_padres}</span>
-                                            <span className="text-gray-300">🎂 {alumno.fecha_nacimiento}</span>
-                                            <span className="text-gray-300">🏥 Ficha médica: {alumno.ficha_medica ? "Sí" : "No"}</span>
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <button
-                                                onClick={() => setAlumnoHistorial(alumno)}
-                                                className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors"
-                                            >
-                                                <ClipboardList size={16} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleEditarClick(alumno)}
-                                                className="bg-yellow-400 hover:bg-yellow-500 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors"
-                                            >
-                                                <Pencil size={16} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleBorrar(alumno.id)}
-                                                className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm text-left text-gray-300">
+
+                            <thead className="text-xs uppercase bg-gray-800 text-gray-400">
+                                <tr>
+                                    <th className="px-4 py-3">Nombre</th>
+                                    <th className="px-4 py-3">Tel. Padres</th>
+                                    <th className="px-4 py-3">Nacimiento</th>
+                                    <th className="px-4 py-3">Ficha médica</th>
+                                    <th className="px-4 py-3 text-right">Acciones</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {alumnos.map((alumno) => (
+                                    <tr key={alumno.id} className="border-b border-gray-700 hover:bg-gray-800">
+
+                                        {editandoId === alumno.id ? (
+                                            <>
+                                                <td className="px-4 py-2">
+                                                    <input
+                                                        value={editForm.nombre ?? ""}
+                                                        onChange={e => setEditForm({ ...editForm, nombre: e.target.value })}
+                                                        className="bg-gray-700 text-white px-2 py-1 rounded w-full"
+                                                    />
+                                                </td>
+
+                                                <td className="px-4 py-2">
+                                                    <input
+                                                        value={editForm.nro_padres ?? ""}
+                                                        onChange={e => setEditForm({ ...editForm, nro_padres: e.target.value })}
+                                                        className="bg-gray-700 text-white px-2 py-1 rounded w-full"
+                                                    />
+                                                </td>
+
+                                                <td className="px-4 py-2">
+                                                    <input
+                                                        type="date"
+                                                        value={editForm.fecha_nacimiento ?? ""}
+                                                        onChange={e => setEditForm({ ...editForm, fecha_nacimiento: e.target.value })}
+                                                        className="bg-gray-700 text-white px-2 py-1 rounded"
+                                                    />
+                                                </td>
+
+                                                <td className="px-4 py-2">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={editForm.ficha_medica ?? false}
+                                                        onChange={e => setEditForm({ ...editForm, ficha_medica: e.target.checked })}
+                                                    />
+                                                </td>
+
+                                                <td className="px-4 py-2 flex justify-end gap-2">
+                                                    <button onClick={handleGuardar} className="bg-green-500 px-2 py-1 rounded">
+                                                        <Check size={16} />
+                                                    </button>
+                                                    <button onClick={() => setEditandoId(null)} className="bg-gray-600 px-2 py-1 rounded">
+                                                        <X size={16} />
+                                                    </button>
+                                                </td>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <td className="px-4 py-3 font-medium text-white">{alumno.nombre}</td>
+                                                <td className="px-4 py-3">{alumno.nro_padres}</td>
+                                                <td className="px-4 py-3">{alumno.fecha_nacimiento}</td>
+                                                <td className="px-4 py-3">{alumno.ficha_medica ? "Sí" : "No"}</td>
+
+                                                <td className="px-4 py-3 flex justify-end gap-2">
+                                                    <button
+                                                        onClick={() => setAlumnoHistorial(alumno)}
+                                                        className="bg-blue-500 px-2 py-1 rounded"
+                                                    >
+                                                        <ClipboardList size={16} />
+                                                    </button>
+
+                                                    <button
+                                                        onClick={() => handleEditarClick(alumno)}
+                                                        className="bg-yellow-400 px-2 py-1 rounded"
+                                                    >
+                                                        <Pencil size={16} />
+                                                    </button>
+
+                                                    <button
+                                                        onClick={() => handleBorrar(alumno.id)}
+                                                        className="bg-red-500 px-2 py-1 rounded"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </td>
+                                            </>
+                                        )}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
             </div>
             {alumnoHistorial && (
