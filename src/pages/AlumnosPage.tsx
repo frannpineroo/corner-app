@@ -5,6 +5,7 @@ import type { Tables } from "../types/supabase";
 import AlumnoForm from "../components/AlumnoForm";
 import AsistenciaModal from "../components/AsistenciaModal";
 import { Pencil, Trash2, Check, X, ChevronLeft, ClipboardList } from "lucide-react";
+import { Search } from "lucide-react";
 
 type Actividad = Tables<"actividades">
 
@@ -19,6 +20,7 @@ const AlumnosPage = ({ actividad, onVolver }: Props) => {
     const [editandoId, setEditandoId] = useState<string | null>(null);
     const [editForm, setEditForm] = useState<Partial<Alumno>>({});
     const [alumnoHistorial, setAlumnoHistorial] = useState<Alumno | null>(null);
+    const [busqueda, setBusqueda] = useState("");
 
     const fetchAlumnos = async () => {
         setLoading(true);
@@ -54,6 +56,10 @@ const AlumnosPage = ({ actividad, onVolver }: Props) => {
         fetchAlumnos();
     }
 
+    const alumnosFiltrados = alumnos.filter((alumno) =>
+        alumno.nombre.toLowerCase().includes(busqueda.toLowerCase())
+    );
+
     return (
         <div className="min-h-screen bg-gray-900 p-6">
             <div className="max-w-3xl mx-auto">
@@ -72,6 +78,20 @@ const AlumnosPage = ({ actividad, onVolver }: Props) => {
 
                 <AlumnoForm onCreated={fetchAlumnos} actividadId={actividad.id} />
 
+                <div className="flex items-center gap-2 mb-4">
+                    <div className="relative w-full max-w-sm">
+                        <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+
+                        <input
+                            type="text"
+                            placeholder="Buscar alumno..."
+                            value={busqueda}
+                            onChange={(e) => setBusqueda(e.target.value)}
+                            className="w-full bg-gray-800 text-white pl-10 pr-3 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                </div>
+
                 {loading ? (
                     <p className="text-gray-500 text-center">Cargando...</p>
                 ) : (
@@ -89,7 +109,7 @@ const AlumnosPage = ({ actividad, onVolver }: Props) => {
                             </thead>
 
                             <tbody>
-                                {alumnos.map((alumno) => (
+                                {alumnosFiltrados.map((alumno) => (
                                     <tr key={alumno.id} className="border-b border-gray-700 hover:bg-gray-800">
 
                                         {editandoId === alumno.id ? (
