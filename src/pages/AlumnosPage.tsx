@@ -21,6 +21,7 @@ const AlumnosPage = ({ actividad, onVolver }: Props) => {
     const [editForm, setEditForm] = useState<Partial<Alumno>>({});
     const [alumnoHistorial, setAlumnoHistorial] = useState<Alumno | null>(null);
     const [busqueda, setBusqueda] = useState("");
+    const [modalAsistencia, setModalAsistencia] = useState(false);
 
     const fetchAlumnos = async () => {
         setLoading(true);
@@ -89,6 +90,14 @@ const AlumnosPage = ({ actividad, onVolver }: Props) => {
                             onChange={(e) => setBusqueda(e.target.value)}
                             className="w-full bg-gray-800 text-white pl-10 pr-3 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
+
+                        <button
+                            onClick={() => setModalAsistencia(true)}
+                            className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                        >
+                            <ClipboardList size={18} />
+                            <span className="text-sm font-medium">Asistencias</span>
+                        </button>
                     </div>
                 </div>
 
