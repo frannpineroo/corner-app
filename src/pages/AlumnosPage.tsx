@@ -19,7 +19,6 @@ const AlumnosPage = ({ actividad, onVolver }: Props) => {
     const [loading, setLoading] = useState(true);
     const [editandoId, setEditandoId] = useState<string | null>(null);
     const [editForm, setEditForm] = useState<Partial<Alumno>>({});
-    const [alumnoHistorial, setAlumnoHistorial] = useState<Alumno | null>(null);
     const [busqueda, setBusqueda] = useState("");
     const [modalAsistencia, setModalAsistencia] = useState(false);
 
@@ -174,13 +173,6 @@ const AlumnosPage = ({ actividad, onVolver }: Props) => {
 
                                                 <td className="px-4 py-3 flex justify-end gap-2">
                                                     <button
-                                                        onClick={() => setAlumnoHistorial(alumno)}
-                                                        className="bg-blue-500 px-2 py-1 rounded"
-                                                    >
-                                                        <ClipboardList size={16} />
-                                                    </button>
-
-                                                    <button
                                                         onClick={() => handleEditarClick(alumno)}
                                                         className="bg-yellow-400 px-2 py-1 rounded"
                                                     >
@@ -203,10 +195,10 @@ const AlumnosPage = ({ actividad, onVolver }: Props) => {
                     </div>
                 )}
             </div>
-            {alumnoHistorial && (
+            {modalAsistencia && (
                 <AsistenciaModal
-                    alumno={alumnoHistorial}
-                    onCerrar={() => setAlumnoHistorial(null)}
+                    actividadId={actividad.id}
+                    onCerrar={() => setModalAsistencia(false)}
                 />
             )}
         </div>
