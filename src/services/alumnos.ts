@@ -8,7 +8,7 @@ export const getAlumnos = async (actividad_id?: string): Promise<Alumno[]> => {
         query = query.eq('actividad_id', actividad_id);
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query.order("nombre", { ascending: true });
 
     if (error) {
         console.error(error);

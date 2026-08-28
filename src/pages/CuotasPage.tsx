@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/useAuth"
 import type { Alumno } from "../types/models"
 import type { Tables } from "../types/supabase"
 import { ChevronLeft } from "lucide-react"
+import { IconButton } from "../components/Screen"
 
 type Cuota = Tables<"cuotas">
 type Actividad = Tables<"actividades">
@@ -27,7 +28,6 @@ export default function CuotasPage({ actividad, onVolver }: Props) {
     const anio = new Date().getFullYear()
 
     const fetchData = async () => {
-        setLoading(true)
         const [alumnosData, cuotasData] = await Promise.all([
             getAlumnos(actividad.id),
             getCuotasPorActividad(actividad.id)
@@ -37,7 +37,21 @@ export default function CuotasPage({ actividad, onVolver }: Props) {
         setLoading(false)
     }
 
-    useEffect(() => { fetchData() }, [actividad.id])
+    useEffect(() => {
+        let cancelled = false
+        const load = async () => {
+            const [alumnosData, cuotasData] = await Promise.all([
+                getAlumnos(actividad.id),
+                getCuotasPorActividad(actividad.id)
+            ])
+            if (cancelled) return
+            setAlumnos(alumnosData)
+            setCuotas(cuotasData)
+            setLoading(false)
+        }
+        void load()
+        return () => { cancelled = true }
+    }, [actividad.id])
 
     const tieneCuota = (alumno_id: string, mes: string) => {
         return cuotas.some(c => c.alumno_id === alumno_id && c.mes === mes)
@@ -50,46 +64,44 @@ export default function CuotasPage({ actividad, onVolver }: Props) {
     }
 
     return (
-        <div className="min-h-screen bg-gray-900 p-6">
-            <div className="max-w-4xl mx-auto">
-                <div className="flex items-center gap-3 mb-6">
-                    <button
-                        onClick={onVolver}
-                        className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg transition-colors"
-                    >
+        <div className="min-h-dvh bg-ink px-5 py-6 text-crema">
+            <div className="mx-auto w-full max-w-4xl">
+                <div className="mb-6 flex items-center gap-3">
+                    <IconButton label="Volver" onClick={onVolver}>
                         <ChevronLeft size={20} />
-                    </button>
+                    </IconButton>
                     <div>
-                        <h1 className="text-3xl font-bold text-white">{actividad.nombre}</h1>
-                        <p className="text-gray-400 text-sm">Cuotas {anio}</p>
+                        <h1 className="font-display text-4xl leading-none tracking-wide">{actividad.nombre}</h1>
+                        <p className="mt-1 text-sm text-muted">Cuotas {anio}</p>
                     </div>
                 </div>
 
                 {loading ? (
-                    <p className="text-gray-400 text-center">Cargando...</p>
+                    <p className="text-center text-muted">Cargando...</p>
                 ) : (
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto rounded-card bg-cancha p-2">
                         <table className="w-full text-sm">
                             <thead>
                                 <tr>
-                                    <th className="text-left text-gray-400 font-medium p-2">Alumno</th>
+                                    <th className="p-2 text-left font-medium text-muted">Alumno</th>
                                     {MESES.map(mes => (
-                                        <th key={mes} className="text-gray-400 font-medium p-2 text-center">{mes.slice(0, 3)}</th>
+                                        <th key={mes} className="p-2 text-center font-medium text-muted">{mes.slice(0, 3)}</th>
                                     ))}
                                 </tr>
                             </thead>
                             <tbody>
                                 {alumnos.map(alumno => (
-                                    <tr key={alumno.id} className="border-t border-gray-700">
-                                        <td className="text-white p-2 font-medium">{alumno.nombre}</td>
+                                    <tr key={alumno.id} className="border-t border-cancha-2">
+                                        <td className="p-2 font-medium text-crema">{alumno.nombre}</td>
                                         {MESES.map(mes => {
                                             const mesKey = `${anio}-${String(MESES.indexOf(mes) + 1).padStart(2, "0")}`
                                             const pagado = tieneCuota(alumno.id, mesKey)
                                             return (
                                                 <td key={mes} className="p-2 text-center">
                                                     <button
+                                                        type="button"
                                                         onClick={() => handleToggle(alumno.id, mesKey)}
-                                                        className={`w-7 h-7 rounded-full transition-colors ${pagado ? "bg-green-500 hover:bg-green-600" : "bg-gray-600 hover:bg-gray-500"}`}
+                                                        className={`size-7 rounded-full transition-colors ${pagado ? "bg-lima hover:brightness-110" : "bg-cancha-2 hover:bg-muted"}`}
                                                     />
                                                 </td>
                                             )

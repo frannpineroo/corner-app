@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { login } from "../services/auth";
+import { LoaderCircle } from "lucide-react";
+import { login, LoginError } from "../services/auth";
+import { isSupabaseConfigured } from "../lib/supabase";
+import { Screen } from "../components/Screen";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -9,54 +12,77 @@ export default function Login() {
 
     const handleLogin = async () => {
         if (!email || !password) return;
+        if (!isSupabaseConfigured) {
+            setError("Falta el archivo .env con VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY");
+            return;
+        }
         setCargando(true);
         setError("");
         try {
             await login(email, password);
-        } catch {
-            setError("Email o contraseña incorrectos");
-        } finally {
+        } catch (e) {
+            if (e instanceof LoginError) setError(e.message);
+            else setError("No hay conexión con el servidor");
             setCargando(false);
         }
-    }
+    };
 
     return (
-        <div className="min-h-screen bg-gray-900 flex items-center justify-center p-6">
-            <div className="bg-gray-800 rounded-xl shadow-xl w-full max-w-sm p-8 flex flex-col gap-5">
-                <div className="text-center">
-                    <h1 className="text-3xl font-bold text-white">Corner App</h1>
-                    <p className="text-gray-400 text-sm mt-1">Iniciá sesión para continuar</p>
+        <Screen>
+            <div className="flex min-h-[80dvh] flex-col justify-center">
+                <div className="rounded-card bg-cancha p-8">
+                    <p className="text-center font-display text-6xl leading-none tracking-wide text-naranja">
+                        CORNER
+                    </p>
+                    <p className="mt-2 text-center text-sm text-muted">Iniciá sesión para continuar</p>
+
+                    {!isSupabaseConfigured && (
+                        <p className="mt-4 rounded-card bg-coral/15 px-3 py-2 text-center text-sm text-coral">
+                            El backend no está configurado. Creá un archivo .env en la raíz del proyecto.
+                        </p>
+                    )}
+
+                    <div className="mt-8 flex flex-col gap-3">
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="rounded-card bg-cancha-2 px-4 py-3 text-sm text-crema placeholder-muted outline-none focus:ring-2 focus:ring-naranja"
+                        />
+                        <input
+                            type="password"
+                            placeholder="Contraseña"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") handleLogin();
+                            }}
+                            className="rounded-card bg-cancha-2 px-4 py-3 text-sm text-crema placeholder-muted outline-none focus:ring-2 focus:ring-naranja"
+                        />
+                    </div>
+
+                    {error && (
+                        <p className="mt-3 text-center text-sm text-coral">{error}</p>
+                    )}
+
+                    <button
+                        type="button"
+                        onClick={handleLogin}
+                        disabled={cargando}
+                        className="mt-5 w-full rounded-card bg-naranja py-3 font-semibold text-ink disabled:opacity-50"
+                    >
+                        {cargando ? (
+                            <span className="inline-flex items-center gap-2">
+                                <LoaderCircle className="size-4 animate-spin" aria-hidden />
+                                Entrando...
+                            </span>
+                        ) : (
+                            "Entrar"
+                        )}
+                    </button>
                 </div>
-
-                <div className="flex flex-col gap-3">
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        className="bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
-                    />
-                    <input
-                        type="password"
-                        placeholder="Contraseña"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        className="bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
-                    />
-                </div>
-
-                {error && (
-                    <p className="text-red-400 text-sm text-center">{error}</p>
-                )}
-
-                <button
-                    onClick={handleLogin}
-                    disabled={cargando}
-                    className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-800 disabled:text-blue-400 text-white font-medium py-2.5 rounded-lg transition-colors"
-                >
-                    {cargando ? "Entrando..." : "Entrar"}
-                </button>
             </div>
-        </div>
-    )
+        </Screen>
+    );
 }

@@ -11,37 +11,46 @@ export const useAuth = () => {
     const [loading, setLoading] = useState(true);
 
     const fetchProfile = async (userId: string) => {
-        try {
-            const cached = localStorage.getItem(`profile_${userId}`)
-            if (cached) {
-                setProfile(JSON.parse(cached))
+        const cached = localStorage.getItem(`profile_${userId}`)
+        if (cached) {
+            try {
+                setProfile(JSON.parse(cached) as Profile)
                 return
+            } catch {
+                localStorage.removeItem(`profile_${userId}`)
             }
+        }
 
-            const { data } = await Promise.race([
-                supabase.from("profiles").select("*").eq("id", userId).single(),
-                new Promise<{ data: null }>((resolve) =>
-                    setTimeout(() => resolve({ data: null }), 3000)
-                )
-            ])
+        const { data, error } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", userId)
+            .maybeSingle()
 
-            if (data) {
-                localStorage.setItem(`profile_${userId}`, JSON.stringify(data))
-                setProfile(data as Profile)
-            } else {
-                setProfile(null)
-            }
-        } catch {
+        if (error) {
+            console.error(error)
+            setProfile(null)
+            return
+        }
+
+        if (data) {
+            localStorage.setItem(`profile_${userId}`, JSON.stringify(data))
+            setProfile(data)
+        } else {
             setProfile(null)
         }
     }
 
     useEffect(() => {
-        const { data: listener } = supabase.auth.onAuthStateChange(async (_, session) => {
+        const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
             const sessionUser = session?.user ?? null
             setUser(sessionUser)
             if (sessionUser) {
-                await fetchProfile(sessionUser.id)
+                const needsProfile = event === "SIGNED_IN" || event === "INITIAL_SESSION"
+                if (needsProfile) {
+                    setLoading(true)
+                    await fetchProfile(sessionUser.id)
+                }
             } else {
                 setProfile(null)
             }

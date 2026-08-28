@@ -1,142 +1,204 @@
 import { useEffect, useState } from "react";
 import { getActividades } from "../services/actividades";
 import { getAlumnos } from "../services/alumnos";
-import { marcarAsistencia } from "../services/asistencias";
+import { getAsistenciasHoy, marcarAsistencia } from "../services/asistencias";
 import { logout } from "../services/auth";
 import { useAuth } from "../hooks/useAuth";
+import { fechaLargaAR } from "../lib/fecha";
 import type { Alumno } from "../types/models";
 import type { Tables } from "../types/supabase";
-import { ChevronRight, ChevronLeft, Check, X } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
+import { IconButton, Screen } from "../components/Screen";
+import SwipeAlumnoCard from "../components/SwipeAlumnoCard";
+import { shouldShowSwipeHint } from "../lib/swipeHint";
 
 type Actividad = Tables<"actividades">;
 
 export default function ProfesorPanel() {
-    const { user } = useAuth();
+    const { user, profile } = useAuth();
     const [actividades, setActividades] = useState<Actividad[]>([]);
     const [actividadSeleccionada, setActividadSeleccionada] = useState<Actividad | null>(null);
     const [alumnos, setAlumnos] = useState<Alumno[]>([]);
+    const [total, setTotal] = useState(0);
+    const [presentes, setPresentes] = useState(0);
+    const [ausentes, setAusentes] = useState(0);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetch = async () => {
+        let cancelled = false;
+        const load = async () => {
             const data = await getActividades();
+            if (cancelled) return;
             setActividades(data);
             setLoading(false);
-        }
-        fetch()
-    }, [])
+        };
+        void load();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     useEffect(() => {
         if (!actividadSeleccionada) return;
-        const fetch = async () => {
-            setLoading(true);
-            const data = await getAlumnos(actividadSeleccionada.id);
-            setAlumnos(data);
-            const inicial: Record<string, boolean | null> = {};
-            data.forEach(a => { inicial[a.id] = null });
+        let cancelled = false;
+        const fetchLista = async () => {
+            const [todos, hoy] = await Promise.all([
+                getAlumnos(actividadSeleccionada.id),
+                getAsistenciasHoy(actividadSeleccionada.id),
+            ]);
+            if (cancelled) return;
+            const marcados = new Set(hoy.map((h) => h.alumno_id));
+            const pendientes = todos
+                .filter((a) => !marcados.has(a.id))
+                .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
+            setAlumnos(pendientes);
+            setTotal(todos.length);
+            setPresentes(hoy.filter((h) => h.presente).length);
+            setAusentes(hoy.filter((h) => !h.presente).length);
             setLoading(false);
-        }
-        fetch()
-    }, [actividadSeleccionada])
+        };
+        void fetchLista();
+        return () => {
+            cancelled = true;
+        };
+    }, [actividadSeleccionada]);
 
-    const handleMarcar = async (alumno_id: string, presente: boolean) => {
+    const handleMarcar = async (alumno: Alumno, presente: boolean) => {
         if (!user) return;
-        await marcarAsistencia(alumno_id, presente, user.id);
-        setAlumnos(prev => prev.filter(a => a.id !== alumno_id));
-    }
+        setAlumnos((prev) => prev.filter((a) => a.id !== alumno.id));
+        if (presente) setPresentes((n) => n + 1);
+        else setAusentes((n) => n + 1);
+        const ok = await marcarAsistencia(alumno.id, presente, user.id);
+        if (!ok) {
+            setAlumnos((prev) =>
+                [...prev, alumno].sort((a, b) => a.nombre.localeCompare(b.nombre, "es"))
+            );
+            if (presente) setPresentes((n) => n - 1);
+            else setAusentes((n) => n - 1);
+        }
+    };
 
     if (actividadSeleccionada) {
+        const hechos = presentes + ausentes;
+        const progreso = total === 0 ? 0 : Math.round((hechos / total) * 100);
+
         return (
-            <div className="min-h-screen bg-gray-900 p-6">
-                <div className="max-w-3xl mx-auto">
-                    <div className="flex items-center gap-3 mb-6">
-                        <button
-                            onClick={() => setActividadSeleccionada(null)}
-                            className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg transition-colors"
-                        >
-                            <ChevronLeft size={20} />
-                        </button>
-                        <div>
-                            <h1 className="text-3xl font-bold text-white">{actividadSeleccionada.nombre}</h1>
-                            <p className="text-gray-400 text-sm">{new Date().toLocaleDateString("es-AR", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
-                        </div>
-                    </div>
-
-                    {loading ? (
-                        <p className="text-gray-400 text-center">Cargando...</p>
-                    ) : alumnos.length === 0 ? (
-                        <div className="bg-gray-800 rounded-xl p-8 text-center">
-                            <p className="text-green-400 font-semibold text-lg">¡Asistencia completada!</p>
-                            <p className="text-gray-400 text-sm mt-1">Todos los alumnos fueron marcados</p>
-                            <button
-                                onClick={() => setActividadSeleccionada(null)}
-                                className="mt-4 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-                            >
-                                Volver a actividades
-                            </button>
-                        </div>
-                    ) : (
-                        <ul className="flex flex-col gap-3">
-                            {alumnos.map((alumno) => (
-                                <li key={alumno.id} className="bg-gray-800 rounded-xl shadow p-4 flex justify-between items-center">
-                                    <span className="text-white font-medium">{alumno.nombre}</span>
-                                    <div className="flex gap-2">
-                                        <button
-                                            onClick={() => handleMarcar(alumno.id, true)}
-                                            className="px-3 py-1.5 rounded-lg text-white text-sm font-medium bg-gray-600 hover:bg-green-500 transition-colors"
-                                        >
-                                            <Check size={16} />
-                                        </button>
-                                        <button
-                                            onClick={() => handleMarcar(alumno.id, false)}
-                                            className="px-3 py-1.5 rounded-lg text-white text-sm font-medium bg-gray-600 hover:bg-red-500 transition-colors"
-                                        >
-                                            <X size={16} />
-                                        </button>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
-            </div>
-        )
-    }
-
-    return (
-        <div className="min-h-screen bg-gray-900 p-6">
-            <div className="max-w-3xl mx-auto">
-                <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-3xl font-bold text-white">Mis actividades</h1>
-                    <button
-                        onClick={logout}
-                        className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+            <Screen>
+                <div className="mb-6 flex items-center gap-3">
+                    <IconButton
+                        label="Volver"
+                        onClick={() => setActividadSeleccionada(null)}
                     >
-                        Cerrar sesión
-                    </button>
+                        <ChevronLeft size={20} />
+                    </IconButton>
+                    <div className="min-w-0">
+                        <h1 className="font-display text-4xl leading-none tracking-wide text-crema">
+                            {actividadSeleccionada.nombre}
+                        </h1>
+                        <p className="mt-1 text-sm capitalize text-muted">{fechaLargaAR()}</p>
+                    </div>
                 </div>
 
                 {loading ? (
-                    <p className="text-gray-400 text-center">Cargando...</p>
+                    <p className="text-center text-muted">Cargando...</p>
+                ) : total === 0 ? (
+                    <div className="rounded-card bg-cancha p-8 text-center">
+                        <p className="font-semibold text-crema">No hay alumnos todavía</p>
+                        <p className="mt-1 text-sm text-muted">El admin tiene que cargarlos</p>
+                    </div>
+                ) : alumnos.length === 0 ? (
+                    <div className="rounded-card bg-cancha px-6 py-12 text-center">
+                        <p className="font-display text-6xl leading-none text-lima">
+                            {total} / {total}
+                        </p>
+                        <p className="mt-4 text-lg font-semibold text-crema">Lista completa</p>
+                        <p className="mt-1 text-sm text-muted">
+                            {presentes} presentes · {ausentes} ausentes
+                        </p>
+                        <button
+                            type="button"
+                            onClick={() => setActividadSeleccionada(null)}
+                            className="mt-6 rounded-card bg-naranja px-5 py-2.5 text-sm font-semibold text-ink"
+                        >
+                            Volver
+                        </button>
+                    </div>
                 ) : (
-                    <ul className="flex flex-col gap-3">
-                        {actividades.map((actividad) => (
-                            <li
-                                key={actividad.id}
-                                className="bg-gray-800 rounded-xl shadow p-4 flex justify-between items-center"
-                            >
-                                <button
-                                    onClick={() => setActividadSeleccionada(actividad)}
-                                    className="text-white font-medium flex items-center gap-2 hover:text-blue-400 transition-colors"
-                                >
-                                    <ChevronRight size={18} />
-                                    {actividad.nombre}
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
+                    <>
+                        <div className="mb-4">
+                            <div className="mb-2 flex items-baseline justify-between">
+                                <span className="font-display text-2xl tracking-wide text-lima">
+                                    {hechos} / {total}
+                                </span>
+                                <span className="text-xs text-muted">deslizá para marcar</span>
+                            </div>
+                            <div className="h-2 overflow-hidden rounded-full bg-cancha-2">
+                                <div
+                                    className="h-full rounded-full bg-lima transition-[width] duration-300"
+                                    style={{ width: `${progreso}%` }}
+                                />
+                            </div>
+                        </div>
+                        <ul className="flex flex-col gap-3">
+                            {alumnos.map((alumno, i) => (
+                                <li key={alumno.id}>
+                                    <SwipeAlumnoCard
+                                        nombre={alumno.nombre}
+                                        showHint={i === 0 && shouldShowSwipeHint()}
+                                        onPresente={() => handleMarcar(alumno, true)}
+                                        onAusente={() => handleMarcar(alumno, false)}
+                                    />
+                                </li>
+                            ))}
+                        </ul>
+                    </>
                 )}
+            </Screen>
+        );
+    }
+
+    const saludo = profile?.nombre ? `Hola, ${profile.nombre}` : "Mis actividades";
+
+    return (
+        <Screen>
+            <div className="mb-8 flex items-start justify-between gap-3">
+                <div>
+                    <p className="font-display text-5xl leading-none tracking-wide text-naranja">CORNER</p>
+                    <h1 className="mt-2 text-xl font-semibold text-crema">{saludo}</h1>
+                    <p className="mt-1 text-sm capitalize text-muted">{fechaLargaAR()}</p>
+                </div>
+                <button
+                    type="button"
+                    onClick={logout}
+                    className="rounded-card bg-coral px-3 py-2 text-sm font-medium text-crema"
+                >
+                    Salir
+                </button>
             </div>
-        </div>
-    )
+
+            {loading ? (
+                <p className="text-center text-muted">Cargando...</p>
+            ) : (
+                <ul className="flex flex-col gap-3">
+                    {actividades.map((actividad) => (
+                        <li key={actividad.id}>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setLoading(true);
+                                    setActividadSeleccionada(actividad);
+                                }}
+                                className="flex w-full items-center justify-between rounded-card bg-naranja px-5 py-5 text-left text-ink"
+                            >
+                                <span className="font-display text-3xl leading-none tracking-wide">
+                                    {actividad.nombre}
+                                </span>
+                                <span className="text-sm font-medium opacity-80">hoy →</span>
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </Screen>
+    );
 }
