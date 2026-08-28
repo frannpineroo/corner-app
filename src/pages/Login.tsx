@@ -5,13 +5,13 @@ import { isSupabaseConfigured } from "../lib/supabase";
 import { Screen } from "../components/Screen";
 
 export default function Login() {
-    const [email, setEmail] = useState("");
+    const [usuario, setUsuario] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [cargando, setCargando] = useState(false);
 
     const handleLogin = async () => {
-        if (!email || !password) return;
+        if (!usuario || !password) return;
         if (!isSupabaseConfigured) {
             setError("Falta el archivo .env con VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY");
             return;
@@ -19,7 +19,7 @@ export default function Login() {
         setCargando(true);
         setError("");
         try {
-            await login(email, password);
+            await login(usuario, password);
         } catch (e) {
             if (e instanceof LoginError) setError(e.message);
             else setError("No hay conexión con el servidor");
@@ -44,10 +44,16 @@ export default function Login() {
 
                     <div className="mt-8 flex flex-col gap-3">
                         <input
-                            type="email"
-                            placeholder="Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            type="text"
+                            name="username"
+                            autoComplete="username"
+                            autoCapitalize="none"
+                            autoCorrect="off"
+                            spellCheck={false}
+                            inputMode="text"
+                            placeholder="Usuario"
+                            value={usuario}
+                            onChange={(e) => setUsuario(e.target.value)}
                             className="rounded-card bg-cancha-2 px-4 py-3 text-sm text-crema placeholder-muted outline-none focus:ring-2 focus:ring-naranja"
                         />
                         <input
