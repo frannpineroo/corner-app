@@ -64,7 +64,7 @@ export default function CuotasPage({ actividad, onVolver }: Props) {
     }
 
     return (
-        <div className="min-h-dvh bg-ink px-5 py-6 text-crema">
+        <div className="min-h-dvh bg-celeste px-5 py-6 text-crema">
             <div className="mx-auto w-full max-w-4xl">
                 <div className="mb-6 flex items-center gap-3">
                     <IconButton label="Volver" onClick={onVolver}>

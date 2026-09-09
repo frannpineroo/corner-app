@@ -37,7 +37,7 @@ const AlumnoForm = ({ onCreated, actividadId }: Props) => {
                 type="submit"
                 disabled={enviando || !nombre.trim()}
                 aria-label="Agregar alumno"
-                className="inline-flex size-12 shrink-0 items-center justify-center rounded-card bg-naranja text-ink disabled:opacity-40"
+                className="inline-flex size-12 shrink-0 items-center justify-center rounded-card bg-naranja text-white disabled:opacity-40"
             >
                 <Plus size={20} />
             </button>

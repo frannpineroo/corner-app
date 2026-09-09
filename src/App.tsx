@@ -14,13 +14,13 @@ export default function App() {
     if (!user) return <Login />;
     if (!profile) {
         return (
-            <div className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-ink px-6 text-center font-sans">
+            <div className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-celeste px-6 text-center font-sans">
                 <p className="text-crema">Entraste, pero no se encontró tu perfil.</p>
                 <p className="text-sm text-muted">Fijate la tabla profiles en Supabase o volvé a intentar.</p>
                 <button
                     type="button"
                     onClick={() => void logout()}
-                    className="rounded-card bg-naranja px-4 py-2 text-sm font-semibold text-ink"
+                    className="rounded-card bg-naranja px-4 py-2 text-sm font-semibold text-white"
                 >
                     Volver al login
                 </button>

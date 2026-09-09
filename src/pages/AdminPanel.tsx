@@ -70,13 +70,13 @@ export default function AdminPanel() {
         <Screen>
             <div className="mb-8 flex items-start justify-between gap-3">
                 <div>
-                    <p className="font-display text-5xl leading-none tracking-wide text-naranja">CORNER</p>
+                    <p className="font-display text-5xl leading-none tracking-wide text-ink">CORNER</p>
                     <p className="mt-2 text-sm text-muted">Administración</p>
                 </div>
                 <button
                     type="button"
                     onClick={logout}
-                    className="rounded-card bg-coral px-3 py-2 text-sm font-medium text-crema"
+                    className="rounded-card bg-cancha px-3 py-2 text-sm font-medium text-naranja"
                 >
                     Salir
                 </button>
@@ -98,7 +98,7 @@ export default function AdminPanel() {
                 <button
                     type="submit"
                     aria-label="Agregar actividad"
-                    className="inline-flex size-12 shrink-0 items-center justify-center rounded-card bg-naranja text-ink"
+                    className="inline-flex size-12 shrink-0 items-center justify-center rounded-card bg-naranja text-white"
                 >
                     <Plus size={20} />
                 </button>

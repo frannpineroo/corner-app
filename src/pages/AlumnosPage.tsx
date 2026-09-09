@@ -96,7 +96,7 @@ const AlumnosPage = ({ actividad, onVolver }: Props) => {
                 <button
                     type="button"
                     onClick={() => setVistaAsistencias(true)}
-                    className="inline-flex items-center gap-2 rounded-card bg-azul px-3 py-2 text-sm font-medium text-ink"
+                    className="inline-flex items-center gap-2 rounded-card bg-azul px-3 py-2 text-sm font-medium text-white"
                 >
                     <ClipboardList size={16} />
                     Lista
@@ -126,7 +126,7 @@ const AlumnosPage = ({ actividad, onVolver }: Props) => {
                                         type="button"
                                         aria-label="Guardar"
                                         onClick={handleGuardar}
-                                        className="rounded-lg bg-lima p-1.5 text-ink"
+                                        className="rounded-lg bg-lima p-1.5 text-white"
                                     >
                                         <Check size={16} />
                                     </button>

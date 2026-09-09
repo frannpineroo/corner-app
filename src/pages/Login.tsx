@@ -3,6 +3,7 @@ import { LoaderCircle } from "lucide-react";
 import { login, LoginError } from "../services/auth";
 import { isSupabaseConfigured } from "../lib/supabase";
 import { Screen } from "../components/Screen";
+import { Logo } from "../components/Logo";
 
 export default function Login() {
     const [usuario, setUsuario] = useState("");
@@ -30,11 +31,9 @@ export default function Login() {
     return (
         <Screen>
             <div className="flex min-h-[80dvh] flex-col justify-center">
+                <Logo className="mx-auto mb-6 w-52" />
                 <div className="rounded-card bg-cancha p-8">
-                    <p className="text-center font-display text-6xl leading-none tracking-wide text-naranja">
-                        CORNER
-                    </p>
-                    <p className="mt-2 text-center text-sm text-muted">Iniciá sesión para continuar</p>
+                    <p className="text-center text-sm text-muted">Iniciá sesión para continuar</p>
 
                     {!isSupabaseConfigured && (
                         <p className="mt-4 rounded-card bg-coral/15 px-3 py-2 text-center text-sm text-coral">
@@ -76,7 +75,7 @@ export default function Login() {
                         type="button"
                         onClick={handleLogin}
                         disabled={cargando}
-                        className="mt-5 w-full rounded-card bg-naranja py-3 font-semibold text-ink disabled:opacity-50"
+                        className="mt-5 w-full rounded-card bg-naranja py-3 font-semibold text-white disabled:opacity-50"
                     >
                         {cargando ? (
                             <span className="inline-flex items-center gap-2">

@@ -108,13 +108,13 @@ export default function SwipeAlumnoCard({
             className="relative overflow-hidden rounded-card select-none"
         >
             <div
-                className="absolute inset-0 flex items-center justify-start bg-lima px-5 font-display text-3xl tracking-wide text-ink"
+                className="absolute inset-0 flex items-center justify-start bg-lima px-5 font-display text-3xl tracking-wide text-white"
                 style={{ opacity: revealPresente ? 1 : 0 }}
             >
                 PRESENTE
             </div>
             <div
-                className="absolute inset-0 flex items-center justify-end bg-coral px-5 font-display text-3xl tracking-wide text-crema"
+                className="absolute inset-0 flex items-center justify-end bg-coral px-5 font-display text-3xl tracking-wide text-white"
                 style={{ opacity: revealAusente ? 1 : 0 }}
             >
                 AUSENTE

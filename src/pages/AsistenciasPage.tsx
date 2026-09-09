@@ -88,8 +88,8 @@ export default function AsistenciasPage({ actividadNombre, actividadId, onVolver
                                             key={marca.fecha}
                                             className={`rounded-lg px-2 py-1 text-xs font-semibold tabular-nums ${
                                                 marca.presente
-                                                    ? "bg-lima text-ink"
-                                                    : "bg-coral text-crema"
+                                                    ? "bg-lima text-white"
+                                                    : "bg-coral text-white"
                                             }`}
                                         >
                                             {fechaChip(marca.fecha)}

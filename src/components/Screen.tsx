@@ -3,7 +3,7 @@ import { LoaderCircle } from "lucide-react";
 
 export function Screen({ children }: { children: ReactNode }) {
     return (
-        <div className="min-h-dvh bg-ink px-5 py-6 text-crema">
+        <div className="min-h-dvh bg-celeste px-5 py-6 text-crema">
             <div className="mx-auto w-full max-w-md">{children}</div>
         </div>
     );
@@ -11,7 +11,7 @@ export function Screen({ children }: { children: ReactNode }) {
 
 export function AuthLoading({ label = "Cargando..." }: { label?: string }) {
     return (
-        <div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-ink">
+        <div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-celeste">
             <LoaderCircle
                 className="size-10 animate-spin text-naranja"
                 aria-hidden
@@ -33,10 +33,10 @@ export function IconButton({
     tone?: "muted" | "coral" | "naranja" | "lima";
 }) {
     const tones = {
-        muted: "bg-cancha-2 text-crema hover:bg-cancha",
-        coral: "bg-coral text-crema hover:brightness-110",
-        naranja: "bg-naranja text-ink hover:brightness-110",
-        lima: "bg-lima text-ink hover:brightness-110",
+        muted: "bg-cancha text-crema hover:bg-cancha-2",
+        coral: "bg-coral text-white hover:brightness-110",
+        naranja: "bg-naranja text-white hover:brightness-110",
+        lima: "bg-lima text-white hover:brightness-110",
     };
 
     return (

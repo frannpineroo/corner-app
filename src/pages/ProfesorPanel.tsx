@@ -118,7 +118,7 @@ export default function ProfesorPanel() {
                         <button
                             type="button"
                             onClick={() => setActividadSeleccionada(null)}
-                            className="mt-6 rounded-card bg-naranja px-5 py-2.5 text-sm font-semibold text-ink"
+                            className="mt-6 rounded-card bg-naranja px-5 py-2.5 text-sm font-semibold text-white"
                         >
                             Volver
                         </button>
@@ -163,14 +163,14 @@ export default function ProfesorPanel() {
         <Screen>
             <div className="mb-8 flex items-start justify-between gap-3">
                 <div>
-                    <p className="font-display text-5xl leading-none tracking-wide text-naranja">CORNER</p>
+                    <p className="font-display text-5xl leading-none tracking-wide text-ink">CORNER</p>
                     <h1 className="mt-2 text-xl font-semibold text-crema">{saludo}</h1>
                     <p className="mt-1 text-sm capitalize text-muted">{fechaLargaAR()}</p>
                 </div>
                 <button
                     type="button"
                     onClick={logout}
-                    className="rounded-card bg-coral px-3 py-2 text-sm font-medium text-crema"
+                    className="rounded-card bg-cancha px-3 py-2 text-sm font-medium text-naranja"
                 >
                     Salir
                 </button>
@@ -188,7 +188,7 @@ export default function ProfesorPanel() {
                                     setLoading(true);
                                     setActividadSeleccionada(actividad);
                                 }}
-                                className="flex w-full items-center justify-between rounded-card bg-naranja px-5 py-5 text-left text-ink"
+                                className="flex w-full items-center justify-between rounded-card bg-cancha px-5 py-5 text-left text-ink"
                             >
                                 <span className="font-display text-3xl leading-none tracking-wide">
                                     {actividad.nombre}
